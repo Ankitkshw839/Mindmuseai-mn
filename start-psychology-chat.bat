@@ -1,0 +1,3 @@
+@echo off
+echo Starting MindMuseAI Psychology Chat Server...
+npm run dev 

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Realtime Database Test - MindMuseAI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #004080 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(28, 26, 46, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #9c89ff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .test-section h3 {
+            color: #28a745;
+            margin-top: 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #aaa;
+        }
+        button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        button.secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            border-left-color: #dc3545;
+            color: #ff6b6b;
+        }
+        .success {
+            border-left-color: #28a745;
+            color: #51cf66;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.connected {
+            background: #28a745;
+            color: white;
+        }
+        .status.disconnected {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Firebase Realtime Database Test</h1>
+        <p style="text-align: center; color: #ccc;">Testing MindMuseAI Firebase Realtime Database Integration</p>
+        
+        <!-- Connection Status -->
+        <div class="test-section">
+            <h3>🔗 Connection Status</h3>
+            <p>Database URL: <code>https://mindfulapp-ad0fa-default-rtdb.firebaseio.com/</code></p>
+            <p>Status: <span id="connection-status" class="status disconnected">Checking...</span></p>
+            <button onclick="testConnection()">Test Connection</button>
+            <div id="connection-result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Profile Data Test -->
+        <div class="test-section">
+            <h3>👤 Profile Data Test</h3>
+            <div class="form-group">
+                <label for="test-name">Full Name:</label>
+                <input type="text" id="test-name" placeholder="Enter your name" value="John Doe">
+            </div>
+            <div class="form-group">
+                <label for="test-email">Email:</label>
+                <input type="email" id="test-email" placeholder="Enter your email" value="john@example.com">
+            </div>
+            <div class="form-group">
+                <label for="test-phone">Phone:</label>
+                <input type="tel" id="test-phone" placeholder="Enter your phone" value="+1234567890">
+            </div>
+            <div class="form-group">
+                <label for="test-goals">Mental Health Goals:</label>
+                <textarea id="test-goals" placeholder="Enter your goals" rows="3">Reduce anxiety and improve sleep quality</textarea>
+            </div>
+            <button onclick="saveTestProfile()">💾 Save Profile</button>
+            <button onclick="loadTestProfile()" class="secondary">📥 Load Profile</button>
+            <div id="profile-result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Mood Tracking Test -->
+        <div class="test-section">
+            <h3>😊 Mood Tracking Test</h3>
+            <div class="form-group">
+                <label for="test-mood">Mood:</label>
+                <select id="test-mood">
+                    <option value="very-happy">😄 Very Happy</option>
+                    <option value="happy">😊 Happy</option>
+                    <option value="neutral" selected>😐 Neutral</option>
+                    <option value="sad">😢 Sad</option>
+                    <option value="very-sad">😭 Very Sad</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="test-intensity">Intensity (1-10):</label>
+                <input type="range" id="test-intensity" min="1" max="10" value="5">
+                <span id="intensity-value">5</span>
+            </div>
+            <div class="form-group">
+                <label for="test-notes">Notes:</label>
+                <textarea id="test-notes" placeholder="How are you feeling today?" rows="2">Feeling good today, had a productive morning</textarea>
+            </div>
+            <button onclick="saveMoodTest()">💾 Save Mood</button>
+            <button onclick="loadMoodHistory()" class="secondary">📊 Load History</button>
+            <div id="mood-result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Real-time Updates Test -->
+        <div class="test-section">
+            <h3>⚡ Real-time Updates Test</h3>
+            <p>This will listen for real-time changes to your profile data.</p>
+            <button onclick="startRealtimeListener()">🎧 Start Listening</button>
+            <button onclick="stopRealtimeListener()" class="secondary">⏹️ Stop Listening</button>
+            <div id="realtime-result" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { 
+            getCurrentUser,
+            saveUserProfile,
+            getUserProfile,
+            updateUserProfile,
+            listenToProfileChanges,
+            saveMoodEntry,
+            getMoodHistory
+        } from './firebase-config.js';
+
+        // Make functions available globally
+        window.firebaseFunctions = {
+            getCurrentUser,
+            saveUserProfile,
+            getUserProfile,
+            updateUserProfile,
+            listenToProfileChanges,
+            saveMoodEntry,
+            getMoodHistory
+        };
+
+        // Test user ID (for testing without authentication)
+        window.testUserId = 'test-user-' + Date.now();
+        
+        console.log('Firebase functions loaded successfully');
+        console.log('Test User ID:', window.testUserId);
+    </script>
+
+    <script>
+        let realtimeListener = null;
+
+        // Update intensity display
+        document.getElementById('test-intensity').addEventListener('input', function() {
+            document.getElementById('intensity-value').textContent = this.value;
+        });
+
+        // Test connection
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            const statusSpan = document.getElementById('connection-status');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Testing connection...';
+            statusSpan.textContent = 'Testing...';
+            statusSpan.className = 'status disconnected';
+
+            try {
+                // Try to get current user
+                const user = await window.firebaseFunctions.getCurrentUser();
+                
+                // Test basic database write/read
+                const testData = {
+                    test: true,
+                    timestamp: new Date().toISOString(),
+                    message: 'Connection test successful'
+                };
+
+                await window.firebaseFunctions.saveUserProfile(window.testUserId, testData);
+                const retrievedData = await window.firebaseFunctions.getUserProfile(window.testUserId);
+
+                if (retrievedData && retrievedData.test) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Connection successful!\n\nTest data saved and retrieved:\n${JSON.stringify(retrievedData, null, 2)}`;
+                    statusSpan.textContent = 'Connected';
+                    statusSpan.className = 'status connected';
+                } else {
+                    throw new Error('Data retrieval failed');
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Connection failed:\n${error.message}`;
+                statusSpan.textContent = 'Disconnected';
+                statusSpan.className = 'status disconnected';
+            }
+        }
+
+        // Save test profile
+        async function saveTestProfile() {
+            const resultDiv = document.getElementById('profile-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Saving profile...';
+
+            try {
+                const profileData = {
+                    fullName: document.getElementById('test-name').value,
+                    email: document.getElementById('test-email').value,
+                    phone: document.getElementById('test-phone').value,
+                    mentalHealthGoals: document.getElementById('test-goals').value,
+                    lastUpdated: new Date().toISOString()
+                };
+
+                await window.firebaseFunctions.saveUserProfile(window.testUserId, profileData);
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ Profile saved successfully!\n\nData saved:\n${JSON.stringify(profileData, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Failed to save profile:\n${error.message}`;
+            }
+        }
+
+        // Load test profile
+        async function loadTestProfile() {
+            const resultDiv = document.getElementById('profile-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Loading profile...';
+
+            try {
+                const profileData = await window.firebaseFunctions.getUserProfile(window.testUserId);
+                
+                if (profileData) {
+                    // Populate form fields
+                    if (profileData.fullName) document.getElementById('test-name').value = profileData.fullName;
+                    if (profileData.email) document.getElementById('test-email').value = profileData.email;
+                    if (profileData.phone) document.getElementById('test-phone').value = profileData.phone;
+                    if (profileData.mentalHealthGoals) document.getElementById('test-goals').value = profileData.mentalHealthGoals;
+
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Profile loaded successfully!\n\nData retrieved:\n${JSON.stringify(profileData, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ No profile data found. Try saving a profile first.';
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Failed to load profile:\n${error.message}`;
+            }
+        }
+
+        // Save mood test
+        async function saveMoodTest() {
+            const resultDiv = document.getElementById('mood-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Saving mood...';
+
+            try {
+                const moodData = {
+                    mood: document.getElementById('test-mood').value,
+                    intensity: parseInt(document.getElementById('test-intensity').value),
+                    notes: document.getElementById('test-notes').value,
+                    timestamp: new Date().toISOString()
+                };
+
+                await window.firebaseFunctions.saveMoodEntry(window.testUserId, moodData);
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ Mood saved successfully!\n\nData saved:\n${JSON.stringify(moodData, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Failed to save mood:\n${error.message}`;
+            }
+        }
+
+        // Load mood history
+        async function loadMoodHistory() {
+            const resultDiv = document.getElementById('mood-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Loading mood history...';
+
+            try {
+                const moodHistory = await window.firebaseFunctions.getMoodHistory(window.testUserId, 10);
+                
+                if (moodHistory && moodHistory.length > 0) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Mood history loaded successfully!\n\nFound ${moodHistory.length} entries:\n${JSON.stringify(moodHistory, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ No mood history found. Try saving some mood entries first.';
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Failed to load mood history:\n${error.message}`;
+            }
+        }
+
+        // Start real-time listener
+        function startRealtimeListener() {
+            const resultDiv = document.getElementById('realtime-result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Starting real-time listener...\n';
+
+            try {
+                realtimeListener = window.firebaseFunctions.listenToProfileChanges(window.testUserId, (profileData) => {
+                    const timestamp = new Date().toLocaleTimeString();
+                    if (profileData) {
+                        resultDiv.textContent += `\n[${timestamp}] ✅ Profile updated:\n${JSON.stringify(profileData, null, 2)}\n`;
+                    } else {
+                        resultDiv.textContent += `\n[${timestamp}] ❌ Profile data is null\n`;
+                    }
+                    resultDiv.scrollTop = resultDiv.scrollHeight;
+                });
+
+                resultDiv.textContent += '🎧 Real-time listener started successfully!\nTry updating your profile in another tab to see real-time updates.\n';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Failed to start real-time listener:\n${error.message}`;
+            }
+        }
+
+        // Stop real-time listener
+        function stopRealtimeListener() {
+            const resultDiv = document.getElementById('realtime-result');
+            
+            if (realtimeListener) {
+                realtimeListener(); // Call the unsubscribe function
+                realtimeListener = null;
+                resultDiv.textContent += '\n⏹️ Real-time listener stopped.\n';
+            } else {
+                resultDiv.textContent += '\n❌ No active listener to stop.\n';
+            }
+        }
+
+        // Auto-test connection on page load
+        window.addEventListener('load', () => {
+            setTimeout(testConnection, 1000);
+        });
+    </script>
+</body>
+</html>

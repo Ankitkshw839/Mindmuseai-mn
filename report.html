@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Session Report - MindMuseAI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .report-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .report-section {
+            margin-bottom: 30px;
+        }
+        .report-section h3 {
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #0d6efd;
+        }
+        .report-section ul {
+            padding-left: 20px;
+        }
+        .report-section ul li {
+            margin-bottom: 10px;
+        }
+        #emotion-tag {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="report-container">
+            <div class="report-header">
+                <i class="bi bi-clipboard2-data-fill" style="font-size: 3rem; color: #0d6efd;"></i>
+                <h1 class="mt-3">Chat Session Report</h1>
+                <p class="text-muted">A summary of your conversation with MindMuseAI.</p>
+            </div>
+
+            <div class="report-section" id="emotion-section">
+                <h3><i class="bi bi-emoji-smile"></i> Detected Emotion</h3>
+                <p id="emotion-tag" class="badge bg-primary text-wrap">Loading...</p>
+            </div>
+
+            <div class="report-section" id="summary-section">
+                <h3><i class="bi bi-card-list"></i> Chat Summary</h3>
+                <ul id="report-summary-list">
+                    <li>Loading...</li>
+                </ul>
+            </div>
+
+            <div class="report-section" id="advice-section">
+                <h3><i class="bi bi-lightbulb"></i> Suggested Next Steps</h3>
+                <p id="report-advice">Loading...</p>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="app.html" class="btn btn-primary">Start a New Chat</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rawReport = localStorage.getItem('chatReportData');
+            if (rawReport) {
+                try {
+                    // The raw text contains all sections. We need to parse it.
+                    const emotionMatch = rawReport.match(/Emotion:(.*?)Report:/s);
+                    const reportMatch = rawReport.match(/Report:(.*?)Advice:/s);
+                    const adviceMatch = rawReport.match(/Advice:(.*)/s);
+
+                    const emotion = emotionMatch ? emotionMatch[1].trim() : 'Could not determine emotion.';
+                    const reportText = reportMatch ? reportMatch[1].trim() : 'Could not generate report.';
+                    const advice = adviceMatch ? adviceMatch[1].trim() : 'Could not generate advice.';
+
+                    // Populate the fields
+                    document.getElementById('emotion-tag').textContent = emotion;
+                    document.getElementById('report-advice').textContent = advice;
+
+                    const summaryList = document.getElementById('report-summary-list');
+                    summaryList.innerHTML = ''; // Clear loading state
+                    reportText.split(/\n|\*|\- /).filter(item => item.trim() !== '').forEach(item => {
+                        if(item.length > 5) { // Filter out empty or noise lines
+                           const li = document.createElement('li');
+                           li.textContent = item.trim();
+                           summaryList.appendChild(li);
+                        }
+                    });
+
+                } catch (e) {
+                    console.error('Failed to parse report data:', e);
+                    document.getElementById('emotion-tag').textContent = 'Error';
+                    document.getElementById('report-summary-list').innerHTML = '<li>Could not load report.</li>';
+                    document.getElementById('report-advice').textContent = 'An error occurred while parsing the report data.';
+                } finally {
+                    // Clean up local storage
+                    localStorage.removeItem('chatReportData');
+                }
+            } else {
+                // Handle case where user lands here directly
+                document.getElementById('emotion-tag').textContent = 'N/A';
+                document.getElementById('report-summary-list').innerHTML = '<li>No report data found. Please complete a chat session first.</li>';
+                document.getElementById('report-advice').textContent = 'No advice available.';
+            }
+        });
+    </script>
+
+</body>
+</html>

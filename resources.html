@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MindMuseAI - Mental health resources and educational materials">
+    <meta name="keywords" content="mental health, resources, therapy, mindfulness, education, self-help">
+    <meta name="theme-color" content="#004080">
+    <title>Resources - MindMuseAI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="force-dark-theme.js"></script>
+    <!-- Include local storage manager -->
+    <script type="module" src="./local-storage.js"></script>
+    <style>
+        .header {
+            background: linear-gradient(90deg, #000000 0%, #004080 50%, #008040 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-layout {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar-menu {
+            width: 260px;
+            background-color: var(--bg-color-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: var(--spacing-md) 0;
+            background-color: #0a0a0a;
+        }
+
+        .menu-item {
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(0, 128, 64, 0.1);
+            color: var(--text-color);
+        }
+
+        .menu-item.active {
+            color: #004080;
+            border-left-color: #004080;
+            background-color: rgba(0, 64, 128, 0.1);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .menu-item .menu-text {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: var(--spacing-lg);
+            max-width: calc(100% - 260px);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: var(--spacing-lg);
+            gap: 0.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .search-btn {
+            background-color: #004080;
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 0 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .search-btn:hover {
+            background-color: #005db3;
+            transform: translateY(-2px);
+        }
+
+        .resources-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .resource-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .resource-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .resource-content {
+            padding: var(--spacing-md);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resource-category {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #004080;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .resource-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .resource-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: var(--spacing-md);
+            flex: 1;
+        }
+
+        .resource-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .resource-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .resource-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .resource-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: transparent;
+            color: #004080;
+            border: 1px solid #004080;
+            border-radius: var(--border-radius-md);
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .resource-btn:hover {
+            background-color: #004080;
+            color: white;
+        }
+
+        .filter-tabs {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: 0.5rem;
+            gap: 0.5rem;
+        }
+
+        .filter-tab {
+            background-color: var(--bg-color-secondary);
+            color: var(--text-muted);
+            border: none;
+            border-radius: var(--border-radius-full);
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-tab:hover {
+            background-color: rgba(0, 128, 64, 0.1);
+            color: var(--text-color);
+        }
+
+        .filter-tab.active {
+            background-color: #004080;
+            color: white;
+        }
+
+        .resource-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: #004080;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-bottom: var(--spacing-lg);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #004080;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar-menu {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .content-area {
+                max-width: 100%;
+            }
+            
+            .resources-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .resources-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Featured resources section */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .section-icon {
+            color: #004080;
+            font-size: 1.2rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        /* Article display */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .article-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .article-content {
+            padding: var(--spacing-md);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .article-category {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #004080;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .article-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        
+        .article-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: var(--spacing-md);
+            flex: 1;
+        }
+        
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .article-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="dark-theme">
+    <!-- Loading screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-content">
+            <h2>MindMuseAI</h2>
+            <p>Your mental wellness companion</p>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div class="dashboard-layout">
+            <aside class="sidebar-menu" style="background-color: #171429; color: #ffffff;">
+                <a href="app.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span class="menu-text">Home</span>
+                </a>
+                <a href="profile.html" class="menu-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="menu-text">Profile</span>
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="menu-text">Settings</span>
+                </a>
+                <a href="progress.html" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="menu-text">My Progress</span>
+                </a>
+                <a href="appointments.html" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="menu-text">Appointments</span>
+                </a>
+                <a href="resources.html" class="menu-item active">
+                    <i class="fas fa-book"></i>
+                    <span class="menu-text">Resources</span>
+                </a>
+                <a href="support.html" class="menu-item">
+                    <i class="fas fa-headset"></i>
+                    <span class="menu-text">Support</span>
+                </a>
+            </aside>
+
+            <main class="content-area">
+                <a href="app.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Home</span>
+                </a>
+                
+                <div class="page-header">
+                    <h1>Mental Health Resources</h1>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Search for resources...">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-category="all">All Resources</button>
+                    <button class="filter-tab" data-category="anxiety">Anxiety</button>
+                    <button class="filter-tab" data-category="depression">Depression</button>
+                    <button class="filter-tab" data-category="stress">Stress Management</button>
+                    <button class="filter-tab" data-category="sleep">Sleep</button>
+                    <button class="filter-tab" data-category="mindfulness">Mindfulness</button>
+                    <button class="filter-tab" data-category="self-care">Self-Care</button>
+                    <button class="filter-tab" data-category="relationships">Relationships</button>
+                </div>
+
+                <div class="resource-section">
+                    <h2 class="section-title"><i class="fas fa-star"></i> Featured Resources</h2>
+                    <div class="resources-container">
+                        <div class="resource-card" data-category="mindfulness">
+                            <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=500&auto=format&fit=crop" alt="Meditation guide" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Mindfulness</div>
+                                <h3 class="resource-title">Beginner's Guide to Meditation</h3>
+                                <p class="resource-description">Learn the foundations of meditation practice with simple techniques you can implement in your daily routine.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 15 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-eye"></i> 2.4k</div>
+                                    </div>
+                                    <button class="resource-btn">Read More</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card" data-category="anxiety">
+                            <img src="https://images.unsplash.com/photo-1600618528240-fb9fc964b853?q=80&w=500&auto=format&fit=crop" alt="Anxiety management" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Anxiety</div>
+                                <h3 class="resource-title">Managing Anxiety in Uncertain Times</h3>
+                                <p class="resource-description">Practical strategies to help you cope with anxiety during periods of uncertainty and stress.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 20 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-eye"></i> 3.1k</div>
+                                    </div>
+                                    <button class="resource-btn">Read More</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card" data-category="sleep">
+                            <img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?q=80&w=500&auto=format&fit=crop" alt="Sleep improvement" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Sleep</div>
+                                <h3 class="resource-title">Improving Your Sleep Quality</h3>
+                                <p class="resource-description">Evidence-based techniques to help you fall asleep faster, stay asleep longer, and wake up feeling refreshed.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 18 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-eye"></i> 1.9k</div>
+                                    </div>
+                                    <button class="resource-btn">Read More</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-section">
+                    <h2 class="section-title"><i class="fas fa-book-open"></i> Latest Articles</h2>
+                    <div class="resources-container">
+                        <div class="resource-card" data-category="self-care">
+                            <img src="https://images.unsplash.com/photo-1474418397713-2f4a210618be?q=80&w=500&auto=format&fit=crop" alt="Self-care practices" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Self-Care</div>
+                                <h3 class="resource-title">10 Self-Care Practices for Mental Health</h3>
+                                <p class="resource-description">Simple but effective self-care practices to incorporate into your daily routine for better mental wellbeing.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 12 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-calendar-alt"></i> 2 days ago</div>
+                                    </div>
+                                    <button class="resource-btn">Read More</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card" data-category="stress">
+                            <img src="https://images.unsplash.com/photo-1516302365426-b6e5d4d12c13?q=80&w=500&auto=format&fit=crop" alt="Breathing techniques" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Stress Management</div>
+                                <h3 class="resource-title">5 Simple Breathing Techniques for Stress Relief</h3>
+                                <p class="resource-description">Learn how to use your breath as a powerful tool to manage stress and calm your nervous system.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 8 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-calendar-alt"></i> 1 week ago</div>
+                                    </div>
+                                    <button class="resource-btn">Read More</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card" data-category="depression">
+                            <img src="https://images.unsplash.com/photo-1553696590-4b3f68898333?q=80&w=500&auto=format&fit=crop" alt="Depression support" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Depression</div>
+                                <h3 class="resource-title">Understanding and Managing Depression</h3>
+                                <p class="resource-description">A comprehensive guide to recognizing depression symptoms and finding appropriate support and treatment options.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 25 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-calendar-alt"></i> 2 weeks ago</div>
+                                    </div>
+                                    <button class="resource-btn">Read More</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-section">
+                    <h2 class="section-title"><i class="fas fa-video"></i> Video Resources</h2>
+                    <div class="resources-container">
+                        <div class="resource-card" data-category="mindfulness">
+                            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=500&auto=format&fit=crop" alt="Guided meditation video" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Mindfulness</div>
+                                <h3 class="resource-title">10-Minute Guided Meditation for Anxiety</h3>
+                                <p class="resource-description">A calming guided meditation practice to help reduce anxiety and bring peace to your mind.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 10 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-eye"></i> 4.5k</div>
+                                    </div>
+                                    <button class="resource-btn"><i class="fas fa-play"></i> Watch Now</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card" data-category="stress">
+                            <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=500&auto=format&fit=crop" alt="Yoga for stress video" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Stress Management</div>
+                                <h3 class="resource-title">Gentle Yoga for Stress Relief</h3>
+                                <p class="resource-description">A beginner-friendly yoga sequence designed to release tension and promote relaxation.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 20 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-eye"></i> 3.2k</div>
+                                    </div>
+                                    <button class="resource-btn"><i class="fas fa-play"></i> Watch Now</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resource-card" data-category="sleep">
+                            <img src="https://images.unsplash.com/photo-1472162072942-cd5147eb3902?q=80&w=500&auto=format&fit=crop" alt="Sleep sounds video" class="resource-image">
+                            <div class="resource-content">
+                                <div class="resource-category">Sleep</div>
+                                <h3 class="resource-title">Calming Nature Sounds for Sleep</h3>
+                                <p class="resource-description">Peaceful natural soundscapes to help you relax and drift into a restful sleep.</p>
+                                <div class="resource-footer">
+                                    <div class="resource-meta">
+                                        <div class="resource-meta-item"><i class="fas fa-clock"></i> 60 min</div>
+                                        <div class="resource-meta-item"><i class="fas fa-eye"></i> 5.7k</div>
+                                    </div>
+                                    <button class="resource-btn"><i class="fas fa-play"></i> Watch Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            
+            // Ensure sidebar navigation links work properly
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu .menu-item');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();  // Prevent the default navigation
+                    const href = this.getAttribute('href');
+                    if (href) {
+                        console.log("Navigating to:", href);
+                        window.location.href = href;
+                    }
+                });
+            });
+            
+            // Filter tabs functionality
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const resourceCards = document.querySelectorAll('.resource-card');
+            
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    const selectedCategory = this.getAttribute('data-category');
+                    console.log("Filter selected:", selectedCategory);
+                    
+                    // Filter resources based on selected category
+                    resourceCards.forEach(card => {
+                        const cardCategory = card.getAttribute('data-category');
+                        
+                        if (selectedCategory === 'all' || selectedCategory === cardCategory) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                console.log("Searching for:", searchTerm);
+                
+                if (searchTerm === '') {
+                    // If search term is empty, show all resources based on current filter
+                    const activeTab = document.querySelector('.filter-tab.active');
+                    activeTab.click(); // This triggers the filtering logic
+                    return;
+                }
+                
+                resourceCards.forEach(card => {
+                    const title = card.querySelector('.resource-title').textContent.toLowerCase();
+                    const description = card.querySelector('.resource-description').textContent.toLowerCase();
+                    const category = card.querySelector('.resource-category').textContent.toLowerCase();
+                    
+                    // Check if the search term exists in the title, description or category
+                    if (title.includes(searchTerm) || description.includes(searchTerm) || category.includes(searchTerm)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            }
+            
+            searchBtn.addEventListener('click', performSearch);
+            
+            // Handle Enter key for search
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Resource buttons
+            const resourceBtns = document.querySelectorAll('.resource-btn');
+            resourceBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent the card's click event
+                    const card = this.closest('.resource-card');
+                    const title = card.querySelector('.resource-title').textContent;
+                    const category = card.getAttribute('data-category');
+                    
+                    // Generate a URL with category and title
+                    const url = `resource-detail.html?category=${category}&title=${encodeURIComponent(title)}`;
+                    window.location.href = url;
+                });
+            });
+            
+            // Make entire cards clickable as well
+            resourceCards.forEach(card => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.resource-title').textContent;
+                    const category = this.getAttribute('data-category');
+                    
+                    // Generate a URL with category and title
+                    const url = `resource-detail.html?category=${category}&title=${encodeURIComponent(title)}`;
+                    window.location.href = url;
+                });
+            });
+            
+            // Set theme based on saved theme
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            applyTheme('dark'); // Force dark theme regardless of localStorage
+            
+            function applyTheme(theme) {
+                // Always apply dark theme regardless of the theme parameter
+                    document.documentElement.classList.remove('light-theme');
+                    document.documentElement.classList.add('dark-theme');
+                    document.documentElement.style.setProperty('--bg-color', '#0f0c1d');
+                    document.documentElement.style.setProperty('--bg-color-secondary', '#171429');
+                    document.documentElement.style.setProperty('--text-color', '#ffffff');
+                    document.documentElement.style.setProperty('--text-muted', '#a3a3b9');
+                    document.documentElement.style.setProperty('--border-color', '#2b2b45');
+                    document.documentElement.style.setProperty('--input-bg', '#202035');
+                    document.documentElement.style.setProperty('--card-bg', '#1c1a2e');
+                
+                // Apply dark theme to sidebar specifically
+                const sidebar = document.querySelector('.sidebar-menu');
+                if (sidebar) {
+                    sidebar.style.backgroundColor = '#171429';
+                    sidebar.style.color = '#ffffff';
+                }
+            }
+            
+            // Handle loading screen
+            setTimeout(() => {
+                if (loadingScreen) {
+                    loadingScreen.classList.add('fade-out');
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }
+            }, 1000);
+            
+            console.log('Resources page loaded successfully');
+        });
+    </script>
+
+    <!-- Resource detail page generator (creates pages on the fly) -->
+    <script>
+        // Check if we're on a resource detail page (URL contains parameters)
+        if (window.location.href.includes('resource-detail.html')) {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Resource detail page loaded');
+                
+                // Parse URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const category = urlParams.get('category');
+                const title = urlParams.get('title');
+                
+                if (!category || !title) {
+                    console.error('Missing category or title parameters');
+                    window.location.href = 'resources.html'; // Redirect back if parameters are missing
+                    return;
+                }
+                
+                console.log('Loading resource:', category, title);
+                
+                // The resourceData object contains detailed information for each resource
+                // In a real app, this would come from a database or API
+                const resourceData = {
+                    // Mindfulness resources
+                    "Beginner's Guide to Meditation": {
+                        category: "mindfulness",
+                        title: "Beginner's Guide to Meditation",
+                        image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=900&auto=format&fit=crop",
+                        content: `
+                            <h2>Beginner's Guide to Meditation</h2>
+                            <p class="meta">Reading time: 15 minutes</p>
+                            
+                            <h3>What is Meditation?</h3>
+                            <p>Meditation is a practice where an individual uses a technique – such as mindfulness, or focusing the mind on a particular object, thought, or activity – to train attention and awareness, and achieve a mentally clear and emotionally calm and stable state.</p>
+                            
+                            <h3>Benefits of Regular Meditation</h3>
+                            <ul>
+                                <li>Reduced stress and anxiety</li>
+                                <li>Improved focus and concentration</li>
+                                <li>Better sleep quality</li>
+                                <li>Enhanced self-awareness</li>
+                                <li>Reduced negative emotions</li>
+                                <li>Increased patience and tolerance</li>
+                            </ul>
+                            
+                            <h3>Getting Started: Simple Meditation Techniques</h3>
+                            <p>Begin with just 5 minutes daily and gradually increase your practice time. Find a quiet space where you won't be disturbed.</p>
+                            
+                            <h4>Breathing Meditation</h4>
+                            <ol>
+                                <li>Sit comfortably with good posture</li>
+                                <li>Close your eyes or maintain a soft gaze</li>
+                                <li>Focus on your breathing - the sensation of air flowing in and out</li>
+                                <li>When your mind wanders, gently bring your attention back to your breath</li>
+                                <li>Continue for 5-10 minutes</li>
+                            </ol>
+                            
+                            <h4>Body Scan Meditation</h4>
+                            <ol>
+                                <li>Lie down or sit comfortably</li>
+                                <li>Focus your attention on different parts of your body</li>
+                                <li>Start from your toes and move up to the top of your head</li>
+                                <li>Notice any sensations without judgment</li>
+                                <li>Release tension as you move through each body part</li>
+                            </ol>
+                            
+                            <h3>Common Challenges for Beginners</h3>
+                            <p>It's normal to face challenges when starting meditation. Here are some common issues and solutions:</p>
+                            
+                            <h4>Racing Thoughts</h4>
+                            <p>Don't try to stop your thoughts - this creates more tension. Instead, observe them without judgment and gently return to your focus point.</p>
+                            
+                            <h4>Restlessness</h4>
+                            <p>If sitting still is difficult, try walking meditation or shorter sessions until you build tolerance.</p>
+                            
+                            <h4>Sleepiness</h4>
+                            <p>Meditate when you're alert, ensure good posture, and try with eyes slightly open if you tend to fall asleep.</p>
+                            
+                            <h3>Creating a Sustainable Practice</h3>
+                            <p>Consistency is key to experiencing the benefits of meditation:</p>
+                            <ul>
+                                <li>Set a regular time each day for your practice</li>
+                                <li>Start with short sessions and gradually increase duration</li>
+                                <li>Use guided meditations (apps like Headspace or Calm)</li>
+                                <li>Join a meditation group for accountability</li>
+                                <li>Be patient and compassionate with yourself</li>
+                            </ul>
+                            
+                            <h3>Conclusion</h3>
+                            <p>Meditation is a skill that improves with practice. The benefits accumulate over time, so be patient with yourself as you develop this valuable habit for mental wellbeing.</p>
+                        `,
+                        author: "Dr. Sarah Johnson",
+                        publishDate: "2023-06-15"
+                    },
+                    
+                    // Anxiety resources
+                    "Managing Anxiety in Uncertain Times": {
+                        category: "anxiety",
+                        title: "Managing Anxiety in Uncertain Times",
+                        image: "https://images.unsplash.com/photo-1600618528240-fb9fc964b853?q=80&w=900&auto=format&fit=crop",
+                        content: `
+                            <h2>Managing Anxiety in Uncertain Times</h2>
+                            <p class="meta">Reading time: 20 minutes</p>
+                            
+                            <h3>Understanding Anxiety During Uncertainty</h3>
+                            <p>Anxiety is a natural response to uncertain situations. Our brains are wired to protect us from potential threats, which can lead to heightened anxiety when facing unknown circumstances. This guide explores practical strategies to manage anxiety during challenging and unpredictable periods.</p>
+                            
+                            <h3>Recognize the Signs of Anxiety</h3>
+                            <p>Anxiety can manifest in different ways:</p>
+                            <ul>
+                                <li><strong>Physical symptoms:</strong> Increased heart rate, shallow breathing, muscle tension, digestive issues</li>
+                                <li><strong>Emotional signs:</strong> Excessive worry, irritability, feeling overwhelmed</li>
+                                <li><strong>Cognitive patterns:</strong> Racing thoughts, catastrophizing, difficulty concentrating</li>
+                                <li><strong>Behavioral changes:</strong> Sleep disturbances, avoidance behaviors, restlessness</li>
+                            </ul>
+                            
+                            <h3>Practical Coping Strategies</h3>
+                            
+                            <h4>1. Focus on What You Can Control</h4>
+                            <p>When uncertainty creates anxiety, shift your attention to aspects of your life you can influence:</p>
+                            <ul>
+                                <li>Create daily routines to provide structure</li>
+                                <li>Set small, achievable goals for each day</li>
+                                <li>Take decisive action on matters within your control</li>
+                                <li>Practice letting go of concerns outside your influence</li>
+                            </ul>
+                            
+                            <h4>2. Mindfulness and Grounding Techniques</h4>
+                            <p>These practices help bring your attention to the present moment:</p>
+                            <ul>
+                                <li><strong>5-4-3-2-1 technique:</strong> Acknowledge 5 things you see, 4 things you can touch, 3 things you hear, 2 things you smell, and 1 thing you taste</li>
+                                <li><strong>Box breathing:</strong> Inhale for 4 counts, hold for 4, exhale for 4, hold for 4</li>
+                                <li><strong>Body scan:</strong> Progressively relax each part of your body from toes to head</li>
+                            </ul>
+                            
+                            <h4>3. Limit Media Consumption</h4>
+                            <p>Constant exposure to news and social media can heighten anxiety. Consider:</p>
+                            <ul>
+                                <li>Setting specific times to check news instead of constant monitoring</li>
+                                <li>Seeking information from reliable, balanced sources</li>
+                                <li>Taking regular digital detox periods</li>
+                                <li>Unfollowing accounts that trigger anxiety</li>
+                            </ul>
+                            
+                            <h4>4. Maintain Social Connections</h4>
+                            <p>Human connection is vital for emotional wellbeing:</p>
+                            <ul>
+                                <li>Schedule regular check-ins with supportive friends and family</li>
+                                <li>Be honest about your feelings with trusted individuals</li>
+                                <li>Consider joining support groups for shared experiences</li>
+                                <li>Balance socializing with needed alone time</li>
+                            </ul>
+                            
+                            <h4>5. Physical Self-Care</h4>
+                            <p>Taking care of your body helps reduce anxiety:</p>
+                            <ul>
+                                <li>Prioritize sleep hygiene and consistent sleep schedules</li>
+                                <li>Engage in regular physical activity</li>
+                                <li>Maintain balanced nutrition and hydration</li>
+                                <li>Limit caffeine, alcohol, and other substances that can exacerbate anxiety</li>
+                            </ul>
+                            
+                            <h3>When to Seek Professional Help</h3>
+                            <p>While self-help strategies are valuable, professional support is important if:</p>
+                            <ul>
+                                <li>Anxiety significantly interferes with daily functioning</li>
+                                <li>You experience panic attacks</li>
+                                <li>Anxiety persists for more than two weeks despite using coping strategies</li>
+                                <li>You have thoughts of harming yourself or others</li>
+                            </ul>
+                            
+                            <h3>Conclusion</h3>
+                            <p>Uncertainty is an inevitable part of life, but it doesn't have to control your wellbeing. By implementing these strategies and seeking appropriate support, you can build resilience and manage anxiety even during the most challenging times.</p>
+                        `,
+                        author: "Dr. Michael Chen",
+                        publishDate: "2023-08-22"
+                    },
+                    
+                    // Sleep resources
+                    "Improving Your Sleep Quality": {
+                        category: "sleep",
+                        title: "Improving Your Sleep Quality",
+                        image: "https://images.unsplash.com/photo-1511988617509-a57c8a288659?q=80&w=900&auto=format&fit=crop",
+                        content: `
+                            <h2>Improving Your Sleep Quality</h2>
+                            <p class="meta">Reading time: 18 minutes</p>
+                            
+                            <h3>The Importance of Quality Sleep</h3>
+                            <p>Sleep is a fundamental pillar of health, alongside nutrition and physical activity. Quality sleep improves cognitive function, emotional regulation, immune system functioning, and overall physical health. This guide offers evidence-based techniques to help you improve your sleep quality.</p>
+                            
+                            <h3>Understanding Sleep Cycles</h3>
+                            <p>Sleep consists of several 90-minute cycles, each containing:</p>
+                            <ul>
+                                <li><strong>NREM Stage 1:</strong> Light sleep, transition between wakefulness and sleep</li>
+                                <li><strong>NREM Stage 2:</strong> Body temperature drops, heart rate slows</li>
+                                <li><strong>NREM Stage 3:</strong> Deep sleep, crucial for physical restoration</li>
+                                <li><strong>REM Sleep:</strong> Rapid eye movement, when most dreaming occurs, important for memory consolidation and learning</li>
+                            </ul>
+                            
+                            <h3>Creating an Optimal Sleep Environment</h3>
+                            
+                            <h4>Temperature</h4>
+                            <p>Keep your bedroom between 60-67°F (15-20°C). Your body temperature naturally decreases during sleep, and a cool room helps facilitate this process.</p>
+                            
+                            <h4>Light</h4>
+                            <p>Darkness is essential for melatonin production:</p>
+                            <ul>
+                                <li>Use blackout curtains or a sleep mask</li>
+                                <li>Remove or cover electronic devices with LED lights</li>
+                                <li>If you need a night light, use red-spectrum lighting which is less disruptive to melatonin</li>
+                            </ul>
+                            
+                            <h4>Sound</h4>
+                            <p>Manage noise disruptions with:</p>
+                            <ul>
+                                <li>Earplugs or white noise machines</li>
+                                <li>Sound-absorbing materials like carpets and heavy curtains</li>
+                                <li>Apps that generate consistent background sounds</li>
+                            </ul>
+                            
+                            <h4>Comfort</h4>
+                            <p>Invest in quality sleep essentials:</p>
+                            <ul>
+                                <li>A supportive mattress appropriate for your sleep position</li>
+                                <li>Pillows that maintain proper spinal alignment</li>
+                                <li>Breathable, comfortable bedding</li>
+                            </ul>
+                            
+                            <h3>Establishing a Sleep-Promoting Routine</h3>
+                            
+                            <h4>Consistent Schedule</h4>
+                            <p>Go to bed and wake up at the same times every day, even on weekends. This regulates your body's internal clock and improves sleep quality.</p>
+                            
+                            <h4>Wind-Down Ritual</h4>
+                            <p>Create a 30-60 minute pre-sleep routine:</p>
+                            <ul>
+                                <li>Dim the lights to signal your body it's time to sleep</li>
+                                <li>Disconnect from screens (phones, tablets, computers) at least 30 minutes before bed</li>
+                                <li>Engage in relaxing activities: reading, gentle stretching, meditation, or a warm bath</li>
+                                <li>Try journaling to clear your mind of racing thoughts</li>
+                            </ul>
+                            
+                            <h3>Lifestyle Factors Affecting Sleep</h3>
+                            
+                            <h4>Nutrition and Timing</h4>
+                            <ul>
+                                <li>Avoid large meals within 2-3 hours of bedtime</li>
+                                <li>Limit caffeine after noon and alcohol before bed</li>
+                                <li>Consider sleep-supporting foods like those containing tryptophan, magnesium, and melatonin</li>
+                            </ul>
+                            
+                            <h4>Physical Activity</h4>
+                            <p>Regular exercise improves sleep quality, but timing matters:</p>
+                            <ul>
+                                <li>Exercise earlier in the day for optimal sleep benefits</li>
+                                <li>Complete intense workouts at least 1-2 hours before bed</li>
+                                <li>Gentle yoga or stretching in the evening can promote relaxation</li>
+                            </ul>
+                            
+                            <h3>Managing Sleep Disruptors</h3>
+                            
+                            <h4>Stress and Anxiety</h4>
+                            <p>Techniques to calm an active mind:</p>
+                            <ul>
+                                <li>Progressive muscle relaxation</li>
+                                <li>Guided imagery or meditation</li>
+                                <li>Deep breathing exercises</li>
+                                <li>Cognitive restructuring for worrying thoughts</li>
+                            </ul>
+                            
+                            <h4>Technology Use</h4>
+                            <p>Digital devices can interfere with sleep:</p>
+                            <ul>
+                                <li>Activate blue light filters in the evening</li>
+                                <li>Keep devices out of the bedroom</li>
+                                <li>Set app limits or reminders to disconnect</li>
+                            </ul>
+                            
+                            <h3>When to Seek Professional Help</h3>
+                            <p>Consider consulting a healthcare provider if you experience:</p>
+                            <ul>
+                                <li>Persistent difficulty falling or staying asleep</li>
+                                <li>Chronic daytime fatigue despite adequate sleep time</li>
+                                <li>Loud snoring, gasping, or stopping breathing during sleep</li>
+                                <li>Sleep problems that interfere with daily functioning</li>
+                            </ul>
+                            
+                            <h3>Conclusion</h3>
+                            <p>Improving sleep quality is a process that requires consistency and patience. By implementing these evidence-based techniques and creating a personalized sleep routine, you can experience more restful nights and energized days.</p>
+                        `,
+                        author: "Dr. Lisa Martinez, Sleep Specialist",
+                        publishDate: "2023-07-10"
+                    },
+                    
+                    // More resources can be added here for all categories
+                };
+                
+                // Check if we have data for this resource
+                const resource = resourceData[title];
+                if (!resource) {
+                    console.error('Resource not found:', title);
+                    // Create a generic resource page if specific content not found
+                    document.body.innerHTML = `
+                        <div class="app-container">
+                            <div class="dashboard-layout">
+                                <aside class="sidebar-menu">
+                                    <a href="app.html" class="menu-item">
+                                        <i class="fas fa-home"></i>
+                                        <span class="menu-text">Home</span>
+                                    </a>
+                                    <a href="profile.html" class="menu-item">
+                                        <i class="fas fa-user-circle"></i>
+                                        <span class="menu-text">Profile</span>
+                                    </a>
+                                    <a href="resources.html" class="menu-item active">
+                                        <i class="fas fa-book"></i>
+                                        <span class="menu-text">Resources</span>
+                                    </a>
+                                </aside>
+                                
+                                <main class="content-area">
+                                    <a href="resources.html" class="back-link">
+                                        <i class="fas fa-arrow-left"></i>
+                                        <span>Back to Resources</span>
+                                    </a>
+                                    
+                                    <div class="resource-detail">
+                                        <div class="resource-header">
+                                            <span class="resource-category">${category}</span>
+                                            <h1 class="resource-title">${title}</h1>
+                                        </div>
+                                        
+                                        <div class="resource-content">
+                                            <p>This resource is available for reading via the link below:</p>
+                                            <a href="https://www.nimh.nih.gov/health/topics" class="btn btn-primary" target="_blank">
+                                                View Full Resource
+                                            </a>
+                                        </div>
+                                    </div>
+                                </main>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Build the detail page with the resource data
+                document.body.innerHTML = `
+                    <div class="app-container">
+                        <div class="dashboard-layout">
+                            <aside class="sidebar-menu">
+                                <a href="app.html" class="menu-item">
+                                    <i class="fas fa-home"></i>
+                                    <span class="menu-text">Home</span>
+                                </a>
+                                <a href="profile.html" class="menu-item">
+                                    <i class="fas fa-user-circle"></i>
+                                    <span class="menu-text">Profile</span>
+                                </a>
+                                <a href="resources.html" class="menu-item active">
+                                    <i class="fas fa-book"></i>
+                                    <span class="menu-text">Resources</span>
+                                </a>
+                                <a href="settings.html" class="menu-item">
+                                    <i class="fas fa-cog"></i>
+                                    <span class="menu-text">Settings</span>
+                                </a>
+                            </aside>
+                            
+                            <main class="content-area">
+                                <a href="resources.html" class="back-link">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>Back to Resources</span>
+                                </a>
+                                
+                                <div class="resource-detail">
+                                    <div class="resource-header">
+                                        <span class="resource-category">${resource.category.toUpperCase()}</span>
+                                        <h1 class="resource-title">${resource.title}</h1>
+                                        <div class="resource-meta">
+                                            <span class="author">By ${resource.author}</span>
+                                            <span class="date">Published: ${resource.publishDate}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <img src="${resource.image}" alt="${resource.title}" class="resource-detail-image">
+                                    
+                                    <div class="resource-content">
+                                        ${resource.content}
+                                    </div>
+                                    
+                                    <div class="resource-actions">
+                                        <button class="btn btn-primary" onclick="window.print()">
+                                            <i class="fas fa-print"></i> Print
+                                        </button>
+                                        <button class="btn btn-secondary" onclick="window.history.back()">
+                                            <i class="fas fa-arrow-left"></i> Back
+                                        </button>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                `;
+                
+                // Add CSS for the detail page
+                const style = document.createElement('style');
+                style.textContent = `
+                    .resource-detail {
+                        max-width: 800px;
+                        margin: 0 auto;
+                    }
+                    
+                    .resource-header {
+                        margin-bottom: 2rem;
+                    }
+                    
+                    .resource-category {
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        color: #004080;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        display: block;
+                        margin-bottom: 0.5rem;
+                    }
+                    
+                    .resource-title {
+                        font-size: 2rem;
+                        font-weight: 700;
+                        margin-bottom: 1rem;
+                        color: var(--text-color);
+                    }
+                    
+                    .resource-meta {
+                        display: flex;
+                        gap: 1.5rem;
+                        color: var(--text-muted);
+                        font-size: 0.9rem;
+                        margin-bottom: 1.5rem;
+                    }
+                    
+                    .resource-detail-image {
+                        width: 100%;
+                        height: 300px;
+                        object-fit: cover;
+                        border-radius: 12px;
+                        margin-bottom: 2rem;
+                    }
+                    
+                    .resource-content {
+                        line-height: 1.7;
+                        color: var(--text-color);
+                    }
+                    
+                    .resource-content h2 {
+                        font-size: 1.8rem;
+                        margin-bottom: 1rem;
+                        color: var(--text-color);
+                    }
+                    
+                    .resource-content h3 {
+                        font-size: 1.4rem;
+                        margin: 2rem 0 1rem;
+                        color: var(--text-color);
+                    }
+                    
+                    .resource-content h4 {
+                        font-size: 1.1rem;
+                        margin: 1.5rem 0 0.5rem;
+                        color: var(--text-color);
+                    }
+                    
+                    .resource-content p {
+                        margin-bottom: 1rem;
+                    }
+                    
+                    .resource-content ul, 
+                    .resource-content ol {
+                        margin-bottom: 1.5rem;
+                        padding-left: 1.5rem;
+                    }
+                    
+                    .resource-content li {
+                        margin-bottom: 0.5rem;
+                    }
+                    
+                    .resource-content .meta {
+                        color: var(--text-muted);
+                        font-style: italic;
+                        margin-bottom: 2rem;
+                    }
+                    
+                    .resource-actions {
+                        display: flex;
+                        gap: 1rem;
+                        margin-top: 3rem;
+                        padding-top: 1.5rem;
+                        border-top: 1px solid var(--border-color);
+                    }
+                    
+                    @media print {
+                        .sidebar-menu, .back-link, .resource-actions {
+                            display: none;
+                        }
+                        
+                        .dashboard-layout {
+                            display: block;
+                        }
+                        
+                        .content-area {
+                            max-width: 100%;
+                            padding: 0;
+                        }
+                        
+                        body {
+                            color: black;
+                            background: white;
+                        }
+                        
+                        .resource-content {
+                            color: black;
+                        }
+                        
+                        .resource-content h2,
+                        .resource-content h3,
+                        .resource-content h4,
+                        .resource-title {
+                            color: black;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            });
+        }
+    </script>
+</body>
+
+</html> 

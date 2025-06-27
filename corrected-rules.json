@@ -1,0 +1,30 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "profiles": {
+      "$uid": {
+        ".read": "$uid == auth.uid",
+        ".write": "$uid == auth.uid"
+      }
+    },
+    "moods": {
+      "$uid": {
+        ".read": "$uid == auth.uid",
+        ".write": "$uid == auth.uid"
+      }
+    },
+    "psychology-chat": {
+      "$uid": {
+        ".read": "$uid == auth.uid",
+        ".write": "$uid == auth.uid"
+      }
+    },
+    "user-activity": {
+      "$uid": {
+        ".read": "$uid == auth.uid",
+        ".write": "$uid == auth.uid"
+      }
+    }
+  }
+} 

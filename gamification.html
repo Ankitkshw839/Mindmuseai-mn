@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MindMuseAI - Gamified Mental Wellness">
+    <meta name="keywords" content="mental health, wellness, gamification, mindfulness, progress tracking">
+    <meta name="theme-color" content="#004080">
+    <title>MindMuseAI - Wellness Quest</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script type="module" src="./firebase-config.js"></script>
+    <script type="module" src="./auth.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #4f46e5;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --light-color: #f3f4f6;
+            --dark-color: #1f2937;
+            --text-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --card-border: 1px solid rgba(255, 255, 255, 0.18);
+            --xp-green: #58cc02;
+            --xp-green-dark: #58a700;
+            --lingot-red: #ff4b4b;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000; /* Solid black background */
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 3D Cartoon Display */
+        .cartoon-characters {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .cartoon-character {
+            width: 220px;
+            height: 220px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            margin: 0.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(50px);
+            opacity: 0;
+            animation: character-appear 0.8s ease forwards;
+        }
+        
+        .cartoon-character img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .cartoon-character:hover img {
+            transform: scale(1.1);
+        }
+        
+        .character-1 {
+            animation-delay: 0.2s;
+        }
+        
+        .character-2 {
+            animation-delay: 0.4s;
+        }
+        
+        .character-3 {
+            animation-delay: 0.6s;
+        }
+        
+        @keyframes character-appear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+        
+        /* Header Styles */
+        header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            width: 100%;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--text-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link.active {
+            color: var(--info-color);
+        }
+        
+        .nav-link.active::after {
+            background-color: var(--info-color);
+            width: 100%;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .username {
+            font-weight: 500;
+        }
+        
+        /* Gamification Main Section */
+        .game-container {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2.5fr;
+            gap: 2rem;
+        }
+        
+        /* XP and Stats Section */
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+            height: fit-content;
+        }
+        
+        /* Interactive effects for cartoon characters */
+        .cartoon-character:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .cartoon-characters {
+            padding: 1rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .character-1:hover ~ .character-2,
+        .character-1:hover ~ .character-3 {
+            transform: scale(0.95) translateY(5px);
+            filter: brightness(0.8);
+        }
+        
+        .character-2:hover ~ .character-1,
+        .character-2:hover ~ .character-3 {
+            transform: scale(0.95) translateY(5px);
+            filter: brightness(0.8);
+        }
+        
+        .character-3:hover ~ .character-1,
+        .character-3:hover ~ .character-2 {
+            transform: scale(0.95) translateY(5px);
+            filter: brightness(0.8);
+        }
+        
+        .user-xp {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .xp-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--xp-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(88, 204, 2, 0.3);
+        }
+        
+        .xp-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .xp-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .xp-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .stats-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 0.5rem 0;
+        }
+        
+        .level-progress {
+            margin-top: 0.5rem;
+        }
+        
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .level-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .level-value {
+            font-weight: 600;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--xp-green);
+            border-radius: 5px;
+            width: 65%;
+            transition: width 0.5s ease;
+        }
+        
+        .stats-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+        }
+        
+        .stats-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .stats-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .stats-value {
+            font-weight: 600;
+        }
+        
+        /* Quest Section Styles */
+        .quests-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .section-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 1.25rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .goal-progress {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .goal-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .goal-bar {
+            width: 150px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .goal-fill {
+            height: 100%;
+            background: var(--xp-green);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .quest-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .quest-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .quest-item.completed {
+            background: rgba(88, 204, 2, 0.1);
+            border-left: 4px solid var(--xp-green);
+        }
+        
+        .quest-check {
+            font-size: 1.5rem;
+        }
+        
+        .quest-item.completed .quest-check i {
+            color: var(--xp-green);
+        }
+        
+        .quest-content {
+            flex: 1;
+        }
+        
+        .quest-content h3 {
+            font-size: 1rem;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .quest-content p {
+            font-size: 0.9rem;
+            margin: 0;
+            opacity: 0.8;
+        }
+        
+        .quest-reward {
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        .xp {
+            color: var(--xp-green);
+            font-size: 0.9rem;
+        }
+        
+        .start-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .start-btn:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+        }
+        
+        /* Path Styles */
+        .path-section {
+            overflow: hidden;
+        }
+        
+        .path-info {
+            background: rgba(79, 70, 229, 0.2);
+            border-radius: 8px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .path-map {
+            position: relative;
+            display: flex;
+            margin-top: 2.5rem;
+            padding: 0 1.5rem;
+            justify-content: space-between;
+        }
+        
+        .path-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .node-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .path-node.completed .node-circle {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .path-node.active .node-circle {
+            background: var(--info-color);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .path-node.locked .node-circle {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .node-line {
+            position: absolute;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            top: 25px;
+            left: 50%;
+            z-index: 1;
+        }
+        
+        .path-node.completed .node-line {
+            background: var(--success-color);
+        }
+        
+        .node-details {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .node-details h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+        
+        .node-details p {
+            margin: 0 0 1rem 0;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .path-btn {
+            background: var(--info-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .path-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+        
+        /* Challenge Styles */
+        .time-left {
+            background: rgba(255, 107, 107, 0.2);
+            border-radius: 8px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--lingot-red);
+        }
+        
+        .challenge-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+        
+        .challenge-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .challenge-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .challenge-header h3 {
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .challenge-progress {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+        }
+        
+        .progress-bar.small {
+            width: 80px;
+            height: 6px;
+        }
+        
+        .challenge-item p {
+            font-size: 0.9rem;
+            margin: 0 0 1rem 0;
+            opacity: 0.8;
+        }
+        
+        .challenge-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        
+        .challenge-reward {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 500;
+        }
+        
+        .challenge-reward i {
+            font-size: 0.8rem;
+        }
+        
+        .challenge-reward:first-child i {
+            color: var(--lingot-red);
+        }
+        
+        .challenge-reward:last-child i {
+            color: var(--xp-green);
+        }
+        
+        /* Achievement Styles */
+        .view-all {
+            color: var(--info-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .achievement-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .achievement-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--info-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+        
+        .achievement-content {
+            flex: 1;
+        }
+        
+        .achievement-content h3 {
+            font-size: 1rem;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .achievement-content p {
+            font-size: 0.9rem;
+            margin: 0;
+            opacity: 0.8;
+        }
+        
+        .achievement-date {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            text-align: right;
+        }
+        
+        /* Activity Modal Styles */
+        .activity-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: rgba(31, 41, 55, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        
+        .close-btn:hover {
+            opacity: 1;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        /* Activity Styles */
+        .activity-instructions {
+            text-align: center;
+        }
+        
+        .activity-instructions h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        
+        #breathingAnimation {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .breathing-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(75, 0, 130, 0.7) 0%, rgba(138, 43, 226, 0.3) 100%);
+            transition: transform 4s ease;
+        }
+        
+        .breathing-circle.animate {
+            animation: breathe 8s infinite alternate;
+        }
+        
+        .breathing-text {
+            position: absolute;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1.0);
+            }
+            50% {
+                transform: scale(1.5);
+            }
+        }
+        
+        .timer {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 1.5rem 0;
+        }
+        
+        .activity-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4);
+        }
+        
+        /* Journal Form */
+        .journal-form {
+            text-align: left;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(31, 41, 55, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-left: 4px solid var(--info-color);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left-color: var(--success-color);
+        }
+        
+        .notification.warning {
+            border-left-color: var(--warning-color);
+        }
+        
+        .notification i {
+            font-size: 1.2rem;
+            color: var(--info-color);
+        }
+        
+        .notification.success i {
+            color: var(--success-color);
+        }
+        
+        .notification.warning i {
+            color: var(--warning-color);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .game-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .path-map {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 2rem;
+            }
+            
+            .node-line {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .challenge-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .goal-progress, .challenge-progress {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <a href="homepage.html" class="logo">
+                <i class="fas fa-brain"></i>
+                MindMuseAI
+            </a>
+            
+            <div class="nav-links">
+                <a href="homepage.html" class="nav-link">Home</a>
+                <a href="app.html" class="nav-link">Chat</a>
+                <a href="psychology-chat.html" class="nav-link">Psychology</a>
+                <a href="gamification.html" class="nav-link active">Quests</a>
+                <a href="progress.html" class="nav-link">Progress</a>
+            </div>
+            
+            <div class="user-profile">
+                <div class="user-avatar">J</div>
+                <span class="username">John</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 3D Cartoon Characters Section -->
+        <div class="cartoon-characters">
+            <div class="cartoon-character character-1">
+                <img src="pic1 (1).jpg" alt="3D Cartoon Character 1">
+            </div>
+            <div class="cartoon-character character-2">
+                <img src="pic1 (2).jpg" alt="3D Cartoon Character 2">
+            </div>
+            <div class="cartoon-character character-3">
+                <img src="pic1 (3).jpg" alt="3D Cartoon Character 3">
+            </div>
+        </div>
+
+        <div class="game-container">
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="user-xp">
+                    <div class="xp-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="xp-info">
+                        <span class="xp-label">Experience Points</span>
+                        <span class="xp-value">3,240</span>
+                    </div>
+                </div>
+                
+                <div class="level-progress">
+                    <div class="level-info">
+                        <span class="level-label">LEVEL 7</span>
+                        <span class="level-value">460/700 XP</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="stats-divider"></div>
+                
+                <div class="stats-item">
+                    <div class="stats-icon" style="background-color: var(--lingot-red);">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <div class="stats-info">
+                        <span class="stats-label">Wellness Gems</span>
+                        <span class="stats-value">125</span>
+                    </div>
+                </div>
+                
+                <div class="stats-item">
+                    <div class="stats-icon" style="background-color: var(--warning-color);">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="stats-info">
+                        <span class="stats-label">Daily Streak</span>
+                        <span class="stats-value">8 days</span>
+                    </div>
+                </div>
+                
+                <div class="stats-item">
+                    <div class="stats-icon" style="background-color: var(--info-color);">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="stats-info">
+                        <span class="stats-label">Achievements</span>
+                        <span class="stats-value">14/30</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content with Quests -->
+            <div class="quests-section">
+                <!-- Daily Goals -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-calendar-day"></i> Daily Goals</h2>
+                        <div class="goal-progress">
+                            <span class="goal-text">2/4 completed</span>
+                            <div class="goal-bar">
+                                <div class="goal-fill" style="width: 50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-list">
+                        <div class="quest-item completed">
+                            <div class="quest-check">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="quest-content">
+                                <h3>Morning Reflection</h3>
+                                <p>Complete a 5-minute mindfulness session</p>
+                            </div>
+                            <div class="quest-reward">
+                                <span class="xp">+20 XP</span>
+                            </div>
+                        </div>
+                        
+                        <div class="quest-item completed">
+                            <div class="quest-check">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="quest-content">
+                                <h3>Mood Check-in</h3>
+                                <p>Record your mood and energy levels</p>
+                            </div>
+                            <div class="quest-reward">
+                                <span class="xp">+15 XP</span>
+                            </div>
+                        </div>
+                        
+                        <div class="quest-item">
+                            <div class="quest-check">
+                                <i class="fas fa-circle"></i>
+                            </div>
+                            <div class="quest-content">
+                                <h3>Breathing Exercise</h3>
+                                <p>Complete a 3-minute deep breathing session</p>
+                            </div>
+                            <div class="quest-reward">
+                                <span class="xp">+25 XP</span>
+                            </div>
+                            <button class="start-btn">Start</button>
+                        </div>
+                        
+                        <div class="quest-item">
+                            <div class="quest-check">
+                                <i class="fas fa-circle"></i>
+                            </div>
+                            <div class="quest-content">
+                                <h3>Evening Reflection</h3>
+                                <p>Journal about your day's highlights</p>
+                            </div>
+                            <div class="quest-reward">
+                                <span class="xp">+30 XP</span>
+                            </div>
+                            <button class="start-btn">Start</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wellness Path -->
+                <div class="section-card path-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-road"></i> Wellness Path</h2>
+                        <div class="path-info">Level 2: Mindfulness</div>
+                    </div>
+                    
+                    <div class="path-map">
+                        <div class="path-node completed">
+                            <div class="node-circle">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="node-line"></div>
+                        </div>
+                        
+                        <div class="path-node completed">
+                            <div class="node-circle">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="node-line"></div>
+                        </div>
+                        
+                        <div class="path-node active">
+                            <div class="node-circle">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="node-line"></div>
+                            <div class="node-details">
+                                <h4>Focused Attention</h4>
+                                <p>Learn techniques to improve focus and attention</p>
+                                <button class="path-btn">Start Lesson</button>
+                            </div>
+                        </div>
+                        
+                        <div class="path-node locked">
+                            <div class="node-circle">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="node-line"></div>
+                        </div>
+                        
+                        <div class="path-node locked">
+                            <div class="node-circle">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Challenges -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-trophy"></i> Weekly Challenges</h2>
+                        <span class="time-left">5 days left</span>
+                    </div>
+                    
+                    <div class="challenge-list">
+                        <div class="challenge-item">
+                            <div class="challenge-header">
+                                <h3>Gratitude Journey</h3>
+                                <div class="challenge-progress">
+                                    <span>3/7</span>
+                                    <div class="progress-bar small">
+                                        <div class="progress-fill" style="width: 42%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p>Write down three things you're grateful for each day</p>
+                            <div class="challenge-footer">
+                                <span class="challenge-reward">
+                                    <i class="fas fa-gem"></i> 50 Gems
+                                </span>
+                                <span class="challenge-reward">
+                                    <i class="fas fa-bolt"></i> 100 XP
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="challenge-item">
+                            <div class="challenge-header">
+                                <h3>Meditation Master</h3>
+                                <div class="challenge-progress">
+                                    <span>2/5</span>
+                                    <div class="progress-bar small">
+                                        <div class="progress-fill" style="width: 40%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p>Complete 5 meditation sessions (10 min each)</p>
+                            <div class="challenge-footer">
+                                <span class="challenge-reward">
+                                    <i class="fas fa-gem"></i> 75 Gems
+                                </span>
+                                <span class="challenge-reward">
+                                    <i class="fas fa-bolt"></i> 150 XP
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="challenge-item">
+                            <div class="challenge-header">
+                                <h3>Mood Tracker Pro</h3>
+                                <div class="challenge-progress">
+                                    <span>4/7</span>
+                                    <div class="progress-bar small">
+                                        <div class="progress-fill" style="width: 57%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p>Track your mood at least twice daily for a week</p>
+                            <div class="challenge-footer">
+                                <span class="challenge-reward">
+                                    <i class="fas fa-gem"></i> 60 Gems
+                                </span>
+                                <span class="challenge-reward">
+                                    <i class="fas fa-bolt"></i> 120 XP
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Achievements -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-award"></i> Recent Achievements</h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    
+                    <div class="achievement-list">
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="achievement-content">
+                                <h3>Week Warrior</h3>
+                                <p>Maintain a 7-day streak</p>
+                            </div>
+                            <div class="achievement-date">
+                                2 days ago
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="achievement-content">
+                                <h3>Mind Master</h3>
+                                <p>Complete 10 mindfulness exercises</p>
+                            </div>
+                            <div class="achievement-date">
+                                1 week ago
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="achievement-content">
+                                <h3>Progress Tracker</h3>
+                                <p>Record your mood for 14 consecutive days</p>
+                            </div>
+                            <div class="achievement-date">
+                                2 weeks ago
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Starting Activities -->
+    <div class="activity-modal" id="activityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Breathing Exercise</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize gamification system
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up XP system
+            const userXP = {
+                current: 3240,
+                level: 7,
+                levelProgress: 460,
+                levelTarget: 700,
+                
+                addXP(amount) {
+                    this.current += amount;
+                    this.levelProgress += amount;
+                    
+                    // Check for level up
+                    if (this.levelProgress >= this.levelTarget) {
+                        this.levelUp();
+                    }
+                    
+                    this.updateUI();
+                },
+                
+                levelUp() {
+                    this.level++;
+                    this.levelProgress = this.levelProgress - this.levelTarget;
+                    this.levelTarget = Math.floor(this.levelTarget * 1.2);
+                    
+                    // Show level up notification
+                    showNotification(`Level Up! You're now level ${this.level}!`);
+                },
+                
+                updateUI() {
+                    document.querySelector('.xp-value').textContent = this.current.toLocaleString();
+                    document.querySelector('.level-label').textContent = `LEVEL ${this.level}`;
+                    document.querySelector('.level-value').textContent = `${this.levelProgress}/${this.levelTarget} XP`;
+                    
+                    // Update progress bar
+                    const percentage = Math.min(100, (this.levelProgress / this.levelTarget) * 100);
+                    document.querySelector('.progress-fill').style.width = `${percentage}%`;
+                }
+            };
+            
+            // Set up the quests system
+            const questSystem = {
+                completeQuest(questElement, xpReward) {
+                    questElement.classList.add('completed');
+                    questElement.querySelector('.quest-check i').className = 'fas fa-check-circle';
+                    
+                    // Remove start button
+                    const startButton = questElement.querySelector('.start-btn');
+                    if (startButton) {
+                        startButton.remove();
+                    }
+                    
+                    // Update goal progress
+                    const goalsCompleted = document.querySelectorAll('.quest-item.completed').length;
+                    const totalGoals = document.querySelectorAll('.quest-item').length;
+                    document.querySelector('.goal-text').textContent = `${goalsCompleted}/${totalGoals} completed`;
+                    document.querySelector('.goal-fill').style.width = `${(goalsCompleted / totalGoals) * 100}%`;
+                    
+                    // Add XP reward
+                    userXP.addXP(xpReward);
+                    
+                    // Show notification
+                    showNotification(`Quest completed! +${xpReward} XP`);
+                    
+                    // Check if all daily goals are completed
+                    if (goalsCompleted === totalGoals) {
+                        showNotification('All daily goals completed! +50 XP bonus!', 'success');
+                        userXP.addXP(50);
+                    }
+                }
+            };
+            
+            // Set up activities 
+            const activities = {
+                'breathing': {
+                    title: 'Breathing Exercise',
+                    duration: 180, // 3 minutes
+                    xpReward: 25,
+                    instructions: `
+                        <div class="activity-instructions">
+                            <h3>3-Minute Breathing Exercise</h3>
+                            <p>Find a comfortable position and follow the breathing pattern.</p>
+                            <div id="breathingAnimation">
+                                <div class="breathing-circle"></div>
+                                <div class="breathing-text">Inhale</div>
+                            </div>
+                            <div class="timer">03:00</div>
+                            <button class="activity-btn" id="startBreathing">Start</button>
+                        </div>
+                    `,
+                    setup() {
+                        document.getElementById('startBreathing').addEventListener('click', function() {
+                            // Start breathing exercise
+                            const timer = document.querySelector('.timer');
+                            const animation = document.getElementById('breathingAnimation');
+                            const breathingText = document.querySelector('.breathing-text');
+                            const breathingCircle = document.querySelector('.breathing-circle');
+                            
+                            let seconds = 180;
+                            let isInhaling = true;
+                            
+                            // Hide start button
+                            this.style.display = 'none';
+                            
+                            // Start animation
+                            breathingCircle.classList.add('animate');
+                            
+                            // Start timer
+                            const interval = setInterval(() => {
+                                seconds--;
+                                
+                                // Update timer display
+                                const minutes = Math.floor(seconds / 60);
+                                const secs = seconds % 60;
+                                timer.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                                
+                                // Alternate between inhale and exhale
+                                if (seconds % 8 === 0) {
+                                    isInhaling = !isInhaling;
+                                    breathingText.textContent = isInhaling ? 'Inhale' : 'Exhale';
+                                    breathingCircle.style.transform = isInhaling ? 'scale(1.0)' : 'scale(1.5)';
+                                }
+                                
+                                // End of exercise
+                                if (seconds <= 0) {
+                                    clearInterval(interval);
+                                    completeActivity('breathing');
+                                }
+                            }, 1000);
+                        });
+                    }
+                },
+                'reflection': {
+                    title: 'Evening Reflection',
+                    xpReward: 30,
+                    instructions: `
+                        <div class="activity-instructions">
+                            <h3>Journal Your Day</h3>
+                            <p>Take a few minutes to reflect on your day and record your thoughts.</p>
+                            <div class="journal-form">
+                                <div class="form-group">
+                                    <label>What went well today?</label>
+                                    <textarea rows="3" id="positives"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>What could have gone better?</label>
+                                    <textarea rows="3" id="challenges"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>What am I grateful for today?</label>
+                                    <textarea rows="3" id="gratitude"></textarea>
+                                </div>
+                                <button class="activity-btn" id="submitJournal">Complete Reflection</button>
+                            </div>
+                        </div>
+                    `,
+                    setup() {
+                        document.getElementById('submitJournal').addEventListener('click', function() {
+                            // Check if all fields have content
+                            const positives = document.getElementById('positives').value.trim();
+                            const challenges = document.getElementById('challenges').value.trim();
+                            const gratitude = document.getElementById('gratitude').value.trim();
+                            
+                            if (positives && challenges && gratitude) {
+                                completeActivity('reflection');
+                            } else {
+                                showNotification('Please fill in all fields to complete your reflection.', 'warning');
+                            }
+                        });
+                    }
+                }
+            };
+            
+            // Function to start an activity
+            function startActivity(activityId) {
+                const activity = activities[activityId];
+                const modal = document.getElementById('activityModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                
+                // Set up modal content
+                modalTitle.textContent = activity.title;
+                modalBody.innerHTML = activity.instructions;
+                
+                // Show modal
+                modal.classList.add('active');
+                
+                // Set up activity-specific handlers
+                activity.setup();
+            }
+            
+            // Function to complete an activity
+            function completeActivity(activityId) {
+                const activity = activities[activityId];
+                const modal = document.getElementById('activityModal');
+                
+                // Find corresponding quest item
+                let questItem;
+                document.querySelectorAll('.quest-item').forEach(item => {
+                    if (item.querySelector('h3').textContent === activity.title) {
+                        questItem = item;
+                    }
+                });
+                
+                // Complete the quest if found
+                if (questItem) {
+                    questSystem.completeQuest(questItem, activity.xpReward);
+                }
+                
+                // Close modal with slight delay
+                setTimeout(() => {
+                    modal.classList.remove('active');
+                }, 1000);
+                
+                // Show completion notification
+                showNotification(`${activity.title} completed! +${activity.xpReward} XP`, 'success');
+            }
+            
+            // Show notification function
+            function showNotification(message, type = 'info') {
+                const notificationContainer = document.createElement('div');
+                notificationContainer.className = `notification ${type}`;
+                
+                const icon = document.createElement('i');
+                icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-info-circle';
+                
+                const messageText = document.createElement('span');
+                messageText.textContent = message;
+                
+                notificationContainer.appendChild(icon);
+                notificationContainer.appendChild(messageText);
+                document.body.appendChild(notificationContainer);
+                
+                // Animate in
+                setTimeout(() => {
+                    notificationContainer.classList.add('show');
+                }, 10);
+                
+                // Animate out after 3 seconds
+                setTimeout(() => {
+                    notificationContainer.classList.remove('show');
+                    
+                    // Remove from DOM after animation
+                    setTimeout(() => {
+                        document.body.removeChild(notificationContainer);
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Set up event listeners
+            document.querySelectorAll('.start-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const questItem = this.closest('.quest-item');
+                    const questTitle = questItem.querySelector('h3').textContent;
+                    
+                    if (questTitle === 'Breathing Exercise') {
+                        startActivity('breathing');
+                    } else if (questTitle === 'Evening Reflection') {
+                        startActivity('reflection');
+                    }
+                });
+            });
+            
+            // Close modal when clicking the close button
+            document.getElementById('closeModal').addEventListener('click', function() {
+                document.getElementById('activityModal').classList.remove('active');
+            });
+            
+            // Path buttons
+            document.querySelector('.path-btn').addEventListener('click', function() {
+                showNotification('Starting mindfulness lesson...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'mindfulness-lesson.html';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html> 

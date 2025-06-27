@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Create Your Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 48px;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4285f4, #ea4335, #fbbc04, #34a853);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo h1 {
+            background: linear-gradient(45deg, #4285f4, #ea4335, #fbbc04, #34a853);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 500;
+            animation: gradientShift 3s ease-in-out infinite;
+            margin-bottom: 8px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            color: #5f6368;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: #3c4043;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #dadce0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4285f4;
+            box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.1);
+        }
+
+        .input-field:hover:not(:focus) {
+            border-color: #5f6368;
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .gender-option {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .gender-option input[type="radio"] {
+            display: none;
+        }
+
+        .gender-option label {
+            display: block;
+            padding: 12px 16px;
+            border: 2px solid #dadce0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 400;
+            background: #fff;
+        }
+
+        .gender-option input[type="radio"]:checked + label {
+            border-color: #4285f4;
+            background: #e8f0fe;
+            color: #1a73e8;
+            font-weight: 500;
+        }
+
+        .gender-option label:hover {
+            border-color: #5f6368;
+        }
+
+        .disability-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #dadce0;
+        }
+
+        .disability-header {
+            margin-bottom: 16px;
+        }
+
+        .disability-header h3 {
+            color: #3c4043;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .disability-header p {
+            color: #5f6368;
+            font-size: 14px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #dadce0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .checkbox-item:hover {
+            border-color: #5f6368;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            accent-color: #4285f4;
+            cursor: pointer;
+        }
+
+        .checkbox-item.checked {
+            border-color: #4285f4;
+            background: #e8f0fe;
+        }
+
+        .checkbox-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 14px;
+            color: #3c4043;
+            margin: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #4285f4, #1a73e8);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 32px;
+            font-family: inherit;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(66, 133, 244, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #f1f3f4;
+            border-radius: 2px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4285f4, #34a853);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 32px 24px;
+                margin: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .gender-options {
+                flex-direction: column;
+            }
+            
+            .gender-option {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Welcome</h1>
+        </div>
+        <p class="subtitle">Let's get to know you better</p>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <form id="onboardingForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" class="input-field" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" class="input-field" placeholder="Enter your age" min="1" max="120" required>
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                <div class="gender-options">
+                    <div class="gender-option">
+                        <input type="radio" id="male" name="gender" value="male" required>
+                        <label for="male">Male</label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" id="female" name="gender" value="female" required>
+                        <label for="female">Female</label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" id="other" name="gender" value="other" required>
+                        <label for="other">Other</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="disability-section">
+                <div class="disability-header">
+                    <h3>Accessibility Needs</h3>
+                    <p>Help us provide you with the best experience (optional)</p>
+                </div>
+                
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="none" name="disabilities" value="none">
+                        <label for="none">No accessibility needs</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="visual" name="disabilities" value="visual">
+                        <label for="visual">Visual impairment</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hearing" name="disabilities" value="hearing">
+                        <label for="hearing">Hearing impairment</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="mobility" name="disabilities" value="mobility">
+                        <label for="mobility">Mobility impairment</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cognitive" name="disabilities" value="cognitive">
+                        <label for="cognitive">Cognitive/Learning differences</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="other-disability" name="disabilities" value="other">
+                        <label for="other-disability">Other accessibility needs</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Continue</button>
+        </form>
+    </div>
+
+    <script>
+        // Form validation and progress tracking
+        const form = document.getElementById('onboardingForm');
+        const progressFill = document.getElementById('progressFill');
+        const inputs = form.querySelectorAll('input[required]');
+        const checkboxes = document.querySelectorAll('input[name="disabilities"]');
+        const checkboxItems = document.querySelectorAll('.checkbox-item');
+
+        // Update progress bar
+        function updateProgress() {
+            const totalFields = 3; // name, age, gender
+            let filledFields = 0;
+
+            // Check name
+            if (document.getElementById('name').value.trim()) filledFields++;
+            
+            // Check age
+            if (document.getElementById('age').value) filledFields++;
+            
+            // Check gender
+            if (document.querySelector('input[name="gender"]:checked')) filledFields++;
+
+            const progress = (filledFields / totalFields) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        // Add event listeners for progress tracking
+        inputs.forEach(input => {
+            input.addEventListener('input', updateProgress);
+            input.addEventListener('change', updateProgress);
+        });
+
+        // Handle checkbox styling
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const item = this.closest('.checkbox-item');
+                if (this.checked) {
+                    item.classList.add('checked');
+                } else {
+                    item.classList.remove('checked');
+                }
+
+                // Handle "none" option exclusivity
+                if (this.value === 'none' && this.checked) {
+                    profileCheckboxes.forEach(cb => {
+                        if (cb !== this) {
+                            cb.checked = false;
+                            cb.closest('.checkbox-item').classList.remove('checked');
+                        }
+                    });
+                } else if (this.value !== 'none' && this.checked) {
+                    const noneCheckbox = document.getElementById('none');
+                    if (noneCheckbox.checked) {
+                        noneCheckbox.checked = false;
+                        noneCheckbox.closest('.checkbox-item').classList.remove('checked');
+                    }
+                }
+            });
+        });
+
+        /* duplicate inline submit handler removed
+        // (duplicate inline submit handler fully removed)
+            
+            
+            // Collect form data
+            const formData = new FormData(profileForm);
+            const data = {
+                name: formData.get('name'),
+                age: formData.get('age'),
+                gender: formData.get('gender'),
+                disabilities: []
+            };
+
+            // Collect selected disabilities
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    data.disabilities.push(checkbox.value);
+                }
+            });
+                </div>
+                <p class="subtitle">Your profile has been created successfully</p>
+                
+                <div style="background: #e8f5e8; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #34a853;">
+                    <h3 style="color: #137333; margin-bottom: 16px; font-size: 18px;">Profile Summary</h3>
+                    <p style="color: #137333; margin-bottom: 8px;"><strong>Name:</strong> ${data.name}</p>
+                    <p style="color: #137333; margin-bottom: 8px;"><strong>Age:</strong> ${data.age}</p>
+                    <p style="color: #137333; margin-bottom: 8px;"><strong>Gender:</strong> ${data.gender.charAt(0).toUpperCase() + data.gender.slice(1)}</p>
+                    <p style="color: #137333;"><strong>Accessibility Needs:</strong> ${data.disabilities.length > 0 ? data.disabilities.join(', ') : 'None specified'}</p>
+                </div>
+                
+                <button onclick="location.reload()" class="submit-btn">Start Over</button>
+            `;
+        }
+
+        // Initial progress update
+        */
+        // Initial progress update
+        updateProgress();
+    </script>
+
+    <!-- Module script to persist onboarding data to Firebase Realtime Database -->
+    <script type="module">
+        import { auth, saveUserProfile } from './firebase-config.js';
+
+        function showSuccess(data) {
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <div class="logo">
+                    <h1>Welcome, ${data.name}!</h1>
+                </div>
+                <p class="subtitle">Your profile has been created successfully</p>
+                <div style="background: #e8f5e8; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #34a853;">
+                    <h3 style="color: #137333; margin-bottom: 16px; font-size: 18px;">Profile Summary</h3>
+                    <p style="color: #137333; margin-bottom: 8px;"><strong>Name:</strong> ${data.name}</p>
+                    <p style="color: #137333; margin-bottom: 8px;"><strong>Age:</strong> ${data.age}</p>
+                    <p style="color: #137333; margin-bottom: 8px;"><strong>Gender:</strong> ${data.gender.charAt(0).toUpperCase() + data.gender.slice(1)}</p>
+                    <p style="color: #137333;"><strong>Accessibility Needs:</strong> ${data.disabilities.length > 0 ? data.disabilities.join(', ') : 'None specified'}</p>
+                </div>`;
+        }
+
+        const profileForm = document.getElementById('onboardingForm');
+        const profileCheckboxes = document.querySelectorAll('input[name="disabilities"]');
+
+
+        profileForm.addEventListener('submit', async (e) => {
+            // Original inline script already handles UI/validation.
+            // Persist the same data to Firebase after submit.
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    console.error('No authenticated user – profile not saved.');
+                    return;
+                }
+
+                const formData = new FormData(profileForm);
+                const data = {
+                    name: formData.get('name'),
+                    age: formData.get('age'),
+                    gender: formData.get('gender'),
+                    disabilities: []
+                };
+
+                // Gather selected disabilities
+                profileCheckboxes.forEach(cb => {
+                    if (cb.checked) data.disabilities.push(cb.value);
+                });
+
+                
+                showSuccess(data);
+                await saveUserProfile(user.uid, data);
+                // Redirect to homepage after brief confirmation delay
+                setTimeout(() => {
+                    window.location.href = 'homepage.html';
+                }, 1000);
+                console.log('✅ Onboarding profile saved to Realtime Database');
+            } catch (err) {
+                console.error('Error saving profile data:', err);
+            }
+        });
+    </script>
+</body>
+</html>
